@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <!-- <script type="text/javascript" src="script.js"></script> -->
+  <link rel="stylesheet" href="style.css">
+  <title>ToDoリスト</title>
+</head>
+
+<body>
+  <h1>ToDoList</h1>
+  <button onclick="startDictation()">音声入力</button>
+  <input type="text" id="taskInput">
+  <button onclick="addTask()">追加</button>
+  <ul id="taskList">
+  </ul>
+
+  <script>
+    function startDictation() {
+      if (window.hasOwnProperty('webkitSpeechRecognition')) {
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "ja-JP";
+        recognition.start();
+        recognition.onresult = function (e) {
+          document.getElementById('taskInput').value = e.results[0][0].transcript;
+          recognition.stop();
+        };
+        recognition.onerror = function (e) {
+          recognition.stop();
+        }
+      }
+    }
+
+    function addTask() {
+      var li = document.createElement("li");
+      var inputValue = document.getElementById("taskInput").value.trim(); // .trim() を使って前後の余分なスペースを削除
+
+      if (inputValue === '') {
+        alert("タスクを入力してください！");
+        return; // 空の場合は何もせずに関数を終了
+      }
+
+      var t = document.createTextNode(inputValue);
+
+      var deleteButton = document.createElement("button");
+      deleteButton.innerHTML = "完了";
+      deleteButton.onclick = function () {
+        var listItem = this.parentNode;
+        var taskList = listItem.parentNode;
+        taskList.removeChild(listItem);
+      };
+
+      li.appendChild(t);
+      li.appendChild(deleteButton);
+
+      document.getElementById("taskList").appendChild(li);
+      document.getElementById("taskInput").value = "";
+    }
+  </script>
+
+</body>
+
+</html>
